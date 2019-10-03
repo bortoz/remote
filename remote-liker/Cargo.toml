@@ -1,0 +1,9 @@
+[package]
+name = "liker"
+version = "1.0.0"
+authors = ["bortoz"]
+edition = "2018"
+
+[dependencies]
+cpython = "0.2.0"
+error = { path = "../remote-error" }

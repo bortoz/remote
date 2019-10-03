@@ -1,0 +1,15 @@
+[package]
+name = "remote"
+version = "1.0.0"
+authors = ["giacomogallina", "bortoz"]
+edition = "2018"
+
+[dependencies]
+clap = "2.32.0"
+cookie = "0.12"
+cookie-loader = { path = "./remote-cookies-loader" }
+rand = "0.6"
+ssh2 = "0.4"
+tempfile = "3"
+error = { path = "./remote-error" }
+liker = { path = "./remote-liker" }
