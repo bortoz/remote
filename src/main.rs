@@ -38,7 +38,7 @@ fn parse_targets(arg: &str) -> Option<Vec<(u8, u8)>> {
 
 fn main() {
     let matches = App::new("remote")
-        .version("0.2")
+        .version("1.0.0")
         .arg(
             Arg::with_name("target")
                 .short("t")
