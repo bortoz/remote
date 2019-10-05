@@ -87,9 +87,7 @@ impl OlinfoClient {
         {
             let mut tmpfile = tempfile::Builder::new().suffix(".sqlite").tempfile()?;
             let mut buffer = Vec::new();
-            let firefox_match = self
-                .run(format!("ls .mozilla/firefox/*/cookies.sqlite | head -1"))?
-                .0;
+            let firefox_match = self.run("ls .mozilla/firefox/*/cookies.sqlite | head -1".to_string())?.0;
             let firefox_path = Path::new(firefox_match.trim());
             if let Ok((mut remote_file, _)) = self.session.scp_recv(&firefox_path) {
                 remote_file.read_to_end(&mut buffer)?;
