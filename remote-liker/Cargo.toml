@@ -5,5 +5,5 @@ authors = ["bortoz"]
 edition = "2018"
 
 [dependencies]
-cpython = "0.2.0"
+cpython = "0.3.0"
 error = { path = "../remote-error" }

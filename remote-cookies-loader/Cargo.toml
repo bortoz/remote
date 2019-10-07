@@ -1,5 +1,5 @@
 [package]
-name = "cookie-loader"
+name = "cookies-loader"
 version = "1.0.0"
 authors = ["bortoz"]
 edition = "2018"
