@@ -1,8 +1,9 @@
 use error::RemoteError;
 use std::sync::mpsc;
 use std::thread;
+use std::cell::Cell;
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub enum WorkerStatus {
     Running,
     Resolved,
@@ -12,7 +13,7 @@ pub enum WorkerStatus {
 pub struct Worker {
     process: thread::JoinHandle<Result<(String, String), RemoteError>>,
     receiver: mpsc::Receiver<WorkerStatus>,
-    status: WorkerStatus,
+    status: Cell<WorkerStatus>,
 }
 
 impl Worker {
@@ -32,17 +33,17 @@ impl Worker {
                 result
             }),
             receiver: recv,
-            status: WorkerStatus::Running,
+            status: Cell::new(WorkerStatus::Running),
         }
     }
 
-    pub fn get_status(&mut self) -> WorkerStatus {
-        if let WorkerStatus::Running = self.status {
+    pub fn get_status(&self) -> WorkerStatus {
+        if let WorkerStatus::Running = self.status.get() {
             if let Ok(s) = self.receiver.try_recv() {
-                self.status = s;
+                self.status.set(s);
             }
         }
-        self.status.clone()
+        self.status.get()
     }
 
     pub fn join(self) -> Result<(String, String), RemoteError> {

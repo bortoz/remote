@@ -203,7 +203,7 @@ fn main() {
     loop {
         term.cursor().goto(0, 0).unwrap();
         let mut running = 0;
-        for (r, c, w) in &mut handles {
+        for (r, c, w) in &handles {
             term.terminal()
                 .clear(crossterm::ClearType::CurrentLine)
                 .unwrap();
