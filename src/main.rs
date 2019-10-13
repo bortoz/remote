@@ -204,9 +204,6 @@ fn main() {
         term.cursor().goto(0, 0).unwrap();
         let mut running = 0;
         for (r, c, w) in &handles {
-            term.terminal()
-                .clear(crossterm::ClearType::CurrentLine)
-                .unwrap();
             match w.get_status() {
                 WorkerStatus::Running => {
                     running += 1;
@@ -257,12 +254,19 @@ fn main() {
                 let stderr = e.trim_end().to_string();
                 term.terminal()
                     .write(format!(
-                        "{}{}{} terminated successfully: {}{}\n",
+                        "{}{}{} terminated successfully{}\n",
                         crossterm::SetFg(crossterm::Color::Green),
                         (64 + r) as char,
                         c,
-                        crossterm::SetFg(crossterm::Color::Reset),
-                        stdout
+                        if !stdout.is_empty() {
+                            format!(
+                                ": {}{}",
+                                crossterm::SetFg(crossterm::Color::Reset),
+                                stdout
+                            )
+                        } else {
+                            "".to_string()
+                        }
                     ))
                     .unwrap();
                 if stderr.len() > 0 {
