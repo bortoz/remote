@@ -97,6 +97,6 @@ impl OlinfoClient {
                 }
             }
         }
-        Err(RemoteError::new("cookie not found".to_string()))
+        Err(RemoteError::new("cookie not found"))
     }
 }

@@ -51,7 +51,7 @@ pub fn load_chromium_cookies(db_path: &Path) -> Result<CookieJar, RemoteError> {
             if value_buffer.is_empty()
                 || *value_buffer.last().unwrap() as usize > value_buffer.len()
             {
-                return Err(RemoteError::new("decrypt error".to_string()));
+                return Err(RemoteError::new("decrypt error"));
             }
             value_buffer.truncate(value_buffer.len() - *value_buffer.last().unwrap() as usize);
             value = String::from_utf8(value_buffer)?;
