@@ -179,21 +179,27 @@ fn main() {
         }
     }
 
-    let clear = || {
-        if cfg!(target_os = "windows") {
-            Command::new("cls").status().unwrap();
-        } else {
-            Command::new("clear").status().unwrap();
-        }
-    };
-
     let term = crossterm::Crossterm::new();
+    let clear = || {
+        Command::new("clear").status().unwrap();
+    };
 
     clear();
     term.cursor().hide().unwrap();
 
     let mut state = 0;
-    let spinner = "\u{25d0}\u{25d3}\u{25d1}\u{25d2}".to_string();
+    let spinner = vec![
+        " ●    ",
+        "  ●   ",
+        "   ●  ",
+        "    ● ",
+        "     ●",
+        "    ● ",
+        "   ●  ",
+        "  ●   ",
+        " ●    ",
+        "●     "
+    ];
     loop {
         term.cursor().goto(0, 0).unwrap();
         let mut running = 0;
@@ -210,10 +216,7 @@ fn main() {
                             crossterm::SetFg(crossterm::Color::DarkYellow),
                             (64 + *r) as char,
                             c,
-                            spinner
-                                .chars()
-                                .nth((state + (*r + *c) as usize) % 4)
-                                .unwrap(),
+                            spinner[state],
                         ))
                         .unwrap()
                 }
@@ -240,8 +243,8 @@ fn main() {
         if running == 0 {
             break;
         }
-        thread::sleep(Duration::from_millis(250));
-        state = (state + 1) % 4;
+        thread::sleep(Duration::from_millis(150));
+        state = (state + 1) % spinner.len();
     }
 
     clear();
@@ -250,35 +253,29 @@ fn main() {
     for (r, c, t) in handles {
         match t.join() {
             Ok((o, e)) => {
+                let stdout = o.trim_end().to_string();
+                let stderr = e.trim_end().to_string();
                 term.terminal()
                     .write(format!(
-                        "{}{}{} terminated successfully\n",
+                        "{}{}{} terminated successfully: {}{}\n",
                         crossterm::SetFg(crossterm::Color::Green),
                         (64 + r) as char,
                         c,
+                        crossterm::SetFg(crossterm::Color::Reset),
+                        stdout
                     ))
                     .unwrap();
-                let stdout = o.trim_end().to_string();
-                let stderr = e.trim_end().to_string();
-                if stdout.len() > 0 {
-                    term.terminal()
-                        .write(format!(
-                            "{}{}\n",
-                            crossterm::SetFg(crossterm::Color::Reset),
-                            stdout,
-                        ))
-                        .unwrap();
-                }
                 if stderr.len() > 0 {
                     term.terminal()
                         .write(format!(
-                            "{}{}\n",
+                            "{}{}\n{}",
                             crossterm::SetFg(crossterm::Color::Yellow),
                             stderr,
+                            crossterm::SetFg(crossterm::Color::Reset)
                         ))
                         .unwrap();
                 }
-            }
+            },
             Err(e) => {
                 term.terminal()
                     .write(format!(
