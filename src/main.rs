@@ -189,16 +189,8 @@ fn main() {
 
     let mut state = 0;
     let spinner = vec![
-        " ●    ",
-        "  ●   ",
-        "   ●  ",
-        "    ● ",
-        "     ●",
-        "    ● ",
-        "   ●  ",
-        "  ●   ",
-        " ●    ",
-        "●     "
+        " ●    ", "  ●   ", "   ●  ", "    ● ", "     ●", "    ● ", "   ●  ", "  ●   ", " ●    ",
+        "●     ",
     ];
     loop {
         term.cursor().goto(0, 0).unwrap();
@@ -254,21 +246,31 @@ fn main() {
                 let stderr = e.trim_end().to_string();
                 term.terminal()
                     .write(format!(
-                        "{}{}{} terminated successfully{}\n",
+                        "{}{}{} terminated successfully",
                         crossterm::SetFg(crossterm::Color::Green),
                         (64 + r) as char,
-                        c,
-                        if !stdout.is_empty() {
-                            format!(
-                                ": {}{}",
-                                crossterm::SetFg(crossterm::Color::Reset),
-                                stdout
-                            )
-                        } else {
-                            "".to_string()
-                        }
+                        c
                     ))
                     .unwrap();
+                if stdout.is_empty() {
+                    term.terminal().write("\n").unwrap();
+                } else if stdout.matches("\n").count() >= 1 {
+                    term.terminal()
+                        .write(format!(
+                            "\n{}{}\n",
+                            crossterm::SetFg(crossterm::Color::Reset),
+                            stdout
+                        ))
+                        .unwrap();
+                } else {
+                    term.terminal()
+                        .write(format!(
+                            ": {}{}\n",
+                            crossterm::SetFg(crossterm::Color::Reset),
+                            stdout
+                        ))
+                        .unwrap();
+                }
                 if stderr.len() > 0 {
                     term.terminal()
                         .write(format!(
@@ -279,7 +281,7 @@ fn main() {
                         ))
                         .unwrap();
                 }
-            },
+            }
             Err(e) => {
                 term.terminal()
                     .write(format!(
