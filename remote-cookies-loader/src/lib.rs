@@ -22,11 +22,11 @@ pub fn load_chromium_cookies(db_path: &Path) -> Result<CookieJar, RemoteError> {
     let mut statement = connection
         .prepare("SELECT host_key, path, is_secure, name, value, encrypted_value FROM cookies")?;
     while let State::Row = statement.next()? {
-        let host = statement.read::<String>(0)?;
-        let path = statement.read::<String>(1)?;
-        let secure = statement.read::<i64>(2)?;
-        let name = statement.read::<String>(3)?;
-        let mut value = statement.read::<String>(4)?;
+        let host: String = statement.read(0)?;
+        let path: String = statement.read(1)?;
+        let secure: i64 = statement.read(2)?;
+        let name: String = statement.read(3)?;
+        let mut value: String = statement.read(4)?;
         let encrypted_value = &statement.read::<Vec<u8>>(5)?[3..];
         if value == "" {
             let mut buffer = [0u8; 4096];
@@ -56,7 +56,6 @@ pub fn load_chromium_cookies(db_path: &Path) -> Result<CookieJar, RemoteError> {
             value_buffer.truncate(value_buffer.len() - *value_buffer.last().unwrap() as usize);
             value = String::from_utf8(value_buffer)?;
         }
-        println!("{} {} {}", host, name, value);
         jar.add(
             Cookie::build(name, value)
                 .domain(host)

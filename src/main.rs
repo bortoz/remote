@@ -2,12 +2,11 @@ use clap::{App, Arg, SubCommand};
 use core::OlinfoClient;
 use crossterm;
 use rand::Rng;
-use std::process::Command;
 use std::thread;
 use std::time::Duration;
 use worker::{Worker, WorkerStatus};
 
-const ROWS: u8 = 4;
+const ROWS: u8 = 5;
 const COLUMNS: u8 = 4;
 
 fn parse_target(arg: &str) -> Option<(u8, u8)> {
@@ -180,11 +179,8 @@ fn main() {
     }
 
     let term = crossterm::Crossterm::new();
-    let clear = || {
-        Command::new("clear").status().unwrap();
-    };
 
-    clear();
+    term.terminal().clear(crossterm::ClearType::All).unwrap();
     term.cursor().hide().unwrap();
 
     let mut state = 0;
@@ -236,7 +232,7 @@ fn main() {
         state = (state + 1) % spinner.len();
     }
 
-    clear();
+    term.terminal().clear(crossterm::ClearType::All).unwrap();
     term.cursor().goto(0, 0).unwrap();
     term.cursor().show().unwrap();
     for (r, c, t) in handles {
