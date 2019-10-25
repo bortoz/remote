@@ -10,7 +10,9 @@ pub struct RemoteError {
 
 impl RemoteError {
     pub fn new(message: &str) -> RemoteError {
-        RemoteError { message: message.to_string() }
+        RemoteError {
+            message: message.to_string(),
+        }
     }
 }
 

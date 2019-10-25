@@ -1,7 +1,7 @@
 use error::RemoteError;
+use std::cell::Cell;
 use std::sync::mpsc;
 use std::thread;
-use std::cell::Cell;
 
 #[derive(Copy, Clone)]
 pub enum WorkerStatus {
